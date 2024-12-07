@@ -53,11 +53,27 @@ def fill_area(area, panel_width, panel_height, i, j):
     return max_panels
 
 
-def generar_area(area_width, area_height, figure):
+def generar_area(figure, area_width, area_height, panel_width, panel_height):
     """ Genera un área que representa la figura dada. """
+    # Opcion 1: Rectangular area
     if figure == "R":
         return [[0 for _ in range(area_height)] for _ in range(area_width)]
-    return [[0]]
+
+    # Opcion 2: Overlaped area
+    if figure == "O":
+        if area_width * 2 - panel_width <= 0 or area_height * 2 - panel_height <= 0:
+            return [[]]
+
+        area = [[0 for _ in range(area_width * 2 - panel_width)]
+                for _ in range(area_height * 2 - panel_height)]
+        for i in range(len(area)):
+            for j in range(len(area[0])):
+                if i >= area_height or j >= area_width:
+                    if i < area_height - panel_height or j < area_width - panel_width:
+                        area[i][j] = 1
+        return area
+
+    return [[]]
 
 
 def main():
@@ -67,7 +83,8 @@ def main():
         panel_width, panel_height = map(int, infile.readline().split())
         area_width, area_height = map(int, infile.readline().split())
 
-    area = generar_area(area_width, area_height, figure)
+    area = generar_area(figure, area_width, area_height,
+                        panel_width, panel_height)
     result = fill_area(area, panel_width, panel_height, 0, 0)
 
     with open("out.txt", "w") as outfile:
